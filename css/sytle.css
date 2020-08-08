@@ -1,0 +1,90 @@
+html, body,
+ul, ol, li,
+h1, h2, h3, h4, h5, h6, p,
+form, input, div {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Avenir Next";
+}
+
+.header {
+  color: #fff;
+  background-color: #2f5167;
+  height: 80px;
+  width: 100%;
+  position :fixed;
+  top: 0;
+  z-index: 10;
+}
+.header-logo {
+    float: left;
+    font-size: 32px;
+    padding: 15px 40px;
+}
+.header-list li {
+    float: left;
+    padding: 33px 20px;
+}
+
+.main {
+    padding: 50px 40px;
+}
+
+.container h1 {
+  font-size: 140px;
+}
+
+.container h2 {
+  font-size: 60px;
+}
+
+.container span {
+  color: red;
+}
+
+.contents {
+    height: 100%;
+    margin-top: 65px;
+}
+
+.section-title {
+    border-bottom: 2px solid #dee7ec;
+    font-size: 28px;
+    padding-bottom: 15px;
+}
+
+.contents-item p, div {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.content-form {
+    padding-top: 50px;
+}
+
+.section-title {
+    border-bottom: 2px solid #dee7ec;
+    font-size: 28px;
+    padding-bottom: 15px;
+}
+
+input, textarea {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 6px;
+    font-size: 12px;
+    border: 1px solid #dee7ec;
+}
+.content-submit {
+    background-color: cadetblue;
+    color: #fff;
+    cursor: pointer;
+}
+
+button {
+    cursor: pointer;
+}

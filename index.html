@@ -1,0 +1,158 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        YoCoding
+    </title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="css/sytle.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+        integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"
+        integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+        integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"
+        integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="header">
+            <div class="header-logo">YoKoding</div>
+        </div>
+        <div class="main">
+            <div class="contents">
+                <h3 class="section-title">APLIKASI PENCARIAN KATA</h3>
+                <div class="col-md-12">
+                    <div class="contents-item col-md-6">
+                        <div>Link Video</div>
+                        <div>
+                            <input type="text" class="url" v-model="url">
+                        </div>
+                        <div>Text</div>
+                        <div>
+                            <input type="text" class="kataKunci" v-model="kataKunci">
+                        </div>
+                        <div>
+                            <button :disabled="!paginasi.first" class="btn btn-primary btn-sm first"
+                                @click="onFirstClick">First</button>
+                            <button :disabled="!paginasi.prev" class="btn btn-primary btn-sm prev"
+                                @click="onPrevClick">Prev</button>
+                            <button :disabled="!paginasi.next" class="btn btn-primary btn-sm next"
+                                @click="onNextClick">Next</button>
+                            <button :disabled="!paginasi.last" class="btn btn-primary btn-sm slast"
+                                @click="onLastClick">Last</button>
+                            <button class="btn btn-warning btn-sm clearText" @click="clearText"
+                                style="float: right;">Clear</button>
+                        </div>
+                        <hr>
+                        <div>
+                            <div class="col-md-4">Total Hasil: </div>
+                            <div class="col-md-8">{{ paginasi.total }}</div>
+                        </div>
+                        <div>
+                            <div class="col-md-4">Halaman ke: </div>
+                            <div class="col-md-8">{{ paginasi.page }}</div>
+                        </div>
+                        <div>
+                            <div class="col-md-12">
+                                <ul class="daftar">
+                                    <li v-for="(hasil, idx) in daftarHasil" :key="idx">
+                                        <span v-if="hasil.text" v-html="hasil.text"></span>
+                                        <a :href="url + '&t=' + hasil.start + 's'" target="_blank">Youtube</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="contents-item col-md-6" style="padding: 30px 0 20px 50px;">
+                        <pre>{{ jadikanStringPaginasi }}</pre>
+                        <pre>{{ jadikanStringDaftarHasil }}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                url: 'https://www.youtube.com/watch?v=klnvttPfOUM&q=webdev',
+                kataKunci: '',
+                daftarHasil: [],
+                paginasi: {
+                    first: null,
+                    last: null,
+                    prev: null,
+                    next: null,
+                    total: 0,
+                    page: null
+                }
+            },
+            computed: {
+                jadikanStringPaginasi() {
+                    return JSON.stringify(this.paginasi, null, 2);
+                },
+                jadikanStringDaftarHasil() {
+                    return JSON.stringify(this.daftarHasil, null, 2);
+                },
+            },
+            watch: {
+                kataKunci(kataKunci) {
+                    console.log(kataKunci);
+                    this.cari(kataKunci, this.url)
+                }
+            },
+            methods: {
+                async cari(kataKunci, url, paginasi) {
+                    let urlApi = `https://cari-teks-video-api.vercel.app/api/search?q=${kataKunci}&url=${encodeURIComponent(url)}`;
+                    if (paginasi) {
+                        urlApi = paginasi
+                    }
+                    try {
+                        const resp = await fetch(urlApi).then(response => {
+                            if (response.ok) {
+                                return response.json()
+                            }
+                            return []
+                        })
+                        this.daftarHasil = resp.data || [];
+                        this.paginasi.first = resp.first || null;
+                        this.paginasi.last = resp.last || null;
+                        this.paginasi.prev = resp.prev || null;
+                        this.paginasi.next = resp.next || null;
+                        this.paginasi.total = resp.total || 0;
+                        this.paginasi.page = resp.page || null;
+                    } catch (error) {
+
+                    }
+                },
+                clearText() {
+                    console.log('clear text');
+                },
+                onFirstClick() {
+                    this.cari(this.kataKunci, this.url, this.paginasi.first);
+                },
+                onLastClick() {
+                    this.cari(this.kataKunci, this.url, this.paginasi.last);
+                },
+                onPrevClick() {
+                    this.cari(this.kataKunci, this.url, this.paginasi.prev);
+                },
+                onNextClick() {
+                    this.cari(this.kataKunci, this.url, this.paginasi.next);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
